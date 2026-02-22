@@ -1,0 +1,6 @@
+numpy
+matplotlib
+sounddevice
+rich
+requests
+flask
