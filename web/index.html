@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Mini Terminal Cheatsheet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600&family=Fira+Code:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: radial-gradient(circle at 20% 20%, #0ff 0%, transparent 25%),
+             radial-gradient(circle at 80% 10%, #ff0 0%, transparent 22%),
+             radial-gradient(circle at 50% 80%, #f0f 0%, transparent 30%),
+             #0a0c10;
+      --panel: rgba(10, 12, 16, 0.82);
+      --glass: rgba(255,255,255,0.05);
+      --accent: #00ffd0;
+      --accent2: #ff7ae0;
+      --text: #e9eef5;
+      --muted: #90a4b8;
+      --shadow: 0 20px 40px rgba(0,0,0,0.35);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px;
+      overflow: hidden;
+    }
+    .shell {
+      width: min(1100px, 95vw);
+      background: var(--panel);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+      position: relative;
+    }
+    .titlebar {
+      height: 46px;
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 10px;
+      background: linear-gradient(90deg, rgba(0,255,208,0.15), rgba(255,122,224,0.12));
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .dots {
+      display: flex;
+      gap: 8px;
+    }
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent);
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+    .dot:nth-child(2) { background: #ffd166; animation-delay: 0.2s; box-shadow: 0 0 10px #ffd166; }
+    .dot:nth-child(3) { background: var(--accent2); animation-delay: 0.4s; box-shadow: 0 0 10px var(--accent2); }
+    @keyframes pulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.15);} }
+    .title {
+      font-weight: 600;
+      letter-spacing: 0.4px;
+      color: var(--muted);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      padding: 18px 18px 22px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, transparent 100%);
+    }
+    .card {
+      background: var(--glass);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      padding: 14px 16px;
+      transition: transform 180ms ease, border 180ms ease, box-shadow 180ms ease, background 180ms ease;
+      }
+    .card:hover { transform: translateY(-3px); border-color: rgba(0,255,208,0.4); box-shadow: 0 10px 30px rgba(0,0,0,0.25); background: rgba(0,255,208,0.03); }
+    .cmd { font-family: 'Fira Code', monospace; font-size: 15px; color: var(--accent); letter-spacing: 0.4px; }
+    .desc { margin: 6px 0 0; color: var(--muted); font-size: 14px; line-height: 1.4; }
+    .section { padding: 14px 18px 4px; color: var(--muted); font-size: 13px; text-transform: uppercase; letter-spacing: 1.2px; }
+    .steps { padding: 0 18px 12px; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 10px; }
+    .step { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.06); border-radius: 12px; padding: 10px 12px; color: var(--text); font-size: 14px; }
+    .step strong { color: var(--accent2); }
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 18px 16px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      color: var(--muted);
+      font-size: 13px;
+      background: rgba(0,0,0,0.18);
+    }
+    .pill {
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(0,255,208,0.12);
+      color: var(--accent);
+      border: 1px solid rgba(0,255,208,0.5);
+      font-size: 12px;
+      letter-spacing: 0.5px;
+    }
+    .detail {
+      margin: 6px 18px 18px;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(0,255,208,0.08), rgba(255,122,224,0.06));
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+    }
+    .detail-header { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .detail-title { font-family: 'Fira Code', monospace; font-size: 16px; color: var(--accent); }
+    .detail small { color: var(--muted); }
+    .detail p { margin: 6px 0; color: var(--text); font-size: 14px; }
+    button.copy {
+      background: rgba(255,255,255,0.1);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+    button.copy:hover { background: rgba(0,255,208,0.18); border-color: rgba(0,255,208,0.7); color: var(--accent); }
+    .note { color: var(--muted); font-size: 13px; margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="titlebar">
+      <div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+      <div class="title">Cheatsheet Terminal · comandos base</div>
+    </div>
+
+    <div class="section">modo de uso</div>
+    <div class="steps">
+      <div class="step"><strong>1.</strong> Haz clic en cualquier tarjeta para ver ejemplos y combinaciones.</div>
+      <div class="step"><strong>2.</strong> Pulsa “Copiar” para pegar el comando en tu terminal.</div>
+      <div class="step"><strong>3.</strong> Crea tus macros (alias) como <code>dropbomb</code> y añádelas a tu <code>~/.zshrc</code>.</div>
+    </div>
+
+    <div class="section">básicos</div>
+    <div class="grid" id="basic"></div>
+
+    <div class="section">historial y edición</div>
+    <div class="grid" id="history"></div>
+
+    <div class="section">navegación</div>
+    <div class="grid" id="nav"></div>
+
+    <div class="section">combinaciones & macros</div>
+    <div class="grid" id="combos"></div>
+
+    <div class="detail" id="detail" hidden>
+      <div class="detail-header">
+        <div class="detail-title" id="detail-cmd">$ _</div>
+        <button class="copy" id="copy-btn">Copiar</button>
+      </div>
+      <p id="detail-desc"></p>
+      <p id="detail-usage"></p>
+      <p id="detail-combo"></p>
+      <p class="note">Tip: pega esto en tu terminal, edita y presiona Enter. Las macros se guardan en <code>~/.zshrc</code>.</p>
+    </div>
+
+    <footer>
+      <span>Tip: usa Tab para autocompletar y Ctrl+R para buscar en historial.</span>
+      <span class="pill">Simulación visual · No ejecuta comandos</span>
+    </footer>
+  </div>
+
+  <script>
+    const groups = {
+      basic: [
+        { cmd: 'pwd', desc: 'muestra la ruta actual', usage: 'pwd', combo: 'Útil para confirmar dónde estás antes de ejecutar scripts.' },
+        { cmd: 'ls', desc: 'lista archivos y carpetas', usage: 'ls', combo: 'Añade -lah para tamaños y ocultos.' },
+        { cmd: 'ls -la', desc: 'incluye ocultos y permisos', usage: 'ls -la', combo: 'Combina con | less para revisar carpetas grandes.' },
+        { cmd: 'cat <file>', desc: 'imprime contenido', usage: 'cat README.md', combo: 'Úsalo con | rg "texto" para filtrar.' },
+        { cmd: 'clear', desc: 'limpia la pantalla', usage: 'clear', combo: 'Atajo: Ctrl+L en la mayoría de terminales.' },
+        { cmd: 'man <cmd>', desc: 'manual del comando', usage: 'man ls', combo: 'Q para salir; /patrón para buscar dentro del man.' },
+        { cmd: 'touch <file>', desc: 'crea archivo vacío', usage: 'touch notas.txt', combo: 'Súmalo con echo "texto" > file para llenar algo rápido.' },
+        { cmd: 'mkdir <dir>', desc: 'crea carpeta', usage: 'mkdir proyectos', combo: 'mkdir -p a/b/c crea anidado sin quejarse.' },
+        { cmd: 'rm <file>', desc: 'borra archivo (cuidado)', usage: 'rm notas.txt', combo: 'Prefiere rm -i para confirmar o trash-cli para seguro.' }
+      ],
+      history: [
+        { cmd: 'history', desc: 'lista comandos previos', usage: 'history | tail', combo: 'Combina con rg para buscar algo viejo: history | rg ssh' },
+        { cmd: '!!', desc: 'repite el último comando', usage: '!!', combo: 'Útil tras "permission denied" con sudo: sudo !!' },
+        { cmd: '!n', desc: 'ejecuta entrada n del historial', usage: '!42', combo: 'Ve el número con history primero.' },
+        { cmd: '!$ / Alt+.', desc: 'ultimo argumento del comando previo', usage: 'cat !$', combo: 'Golpea Alt+. varias veces para rotar argumentos previos.' },
+        { cmd: 'Ctrl+R', desc: 'búsqueda incremental en historial', usage: 'Ctrl+R luego escribe parte del comando', combo: 'Ctrl+R de nuevo para seguir buscando hacia atrás.' },
+        { cmd: '^viejo^nuevo', desc: 'sustituye en el último comando', usage: '^test^prod', combo: 'Funciona solo sobre el comando previo.' },
+        { cmd: 'alias ll="ls -lah"', desc: 'crea atajo persistente en shell rc', usage: 'echo "alias ll=\"ls -lah\"" >> ~/.zshrc', combo: 'Recarga con source ~/.zshrc' },
+        { cmd: 'fc', desc: 'edita y re-ejecuta el último comando en editor', usage: 'fc', combo: 'Usa tu $EDITOR; guarda y se ejecuta.' }
+      ],
+      nav: [
+        { cmd: 'cd <dir>', desc: 'cambia de directorio', usage: 'cd proyectos', combo: 'cd ~/Descargas con ~ para home.' },
+        { cmd: 'cd -', desc: 'vuelve al dir anterior', usage: 'cd -', combo: 'Actúa como un toggle entre dos rutas.' },
+        { cmd: 'cd ~', desc: 'va a tu home', usage: 'cd ~', combo: 'Atajo: solo cd sin argumentos.' },
+        { cmd: 'pushd <dir>', desc: 'entra y guarda en la pila', usage: 'pushd src', combo: 'Apila rutas para saltar rápido con popd.' },
+        { cmd: 'popd', desc: 'regresa al dir previo de la pila', usage: 'popd', combo: 'dirs -v muestra el índice de la pila.' },
+        { cmd: 'dirs -v', desc: 'lista la pila de directorios', usage: 'dirs -v', combo: 'Combina con pushd + número para saltar.' },
+        { cmd: 'find . -name "pat"', desc: 'busca archivos por nombre', usage: 'find . -name "*.md"', combo: 'Añade -maxdepth 2 para limitar profundidad.' },
+        { cmd: 'rg "texto"', desc: 'busca texto rápido (ripgrep)', usage: 'rg "main" src/', combo: 'Usa -g"*.js" para filtrar por extensión.' }
+      ],
+      combos: [
+        { cmd: 'ls | less', desc: 'escrolea listados largos', usage: 'ls -la | less', combo: 'Space avanza página, q para salir.' },
+        { cmd: 'grep -R "pat" .', desc: 'busca recursivo simple', usage: 'grep -R "TODO" .', combo: 'Añade --color=always para resaltar.' },
+        { cmd: 'tail -f <log>', desc: 'seguir logs en vivo', usage: 'tail -f /var/log/system.log', combo: 'Combina con rg -n en otra ventana para buscar.' },
+        { cmd: 'curl httpbin.org/ip', desc: 'consulta rápida HTTP', usage: 'curl -s https://httpbin.org/ip', combo: 'Añade | jq para formatear JSON.' },
+        { cmd: 'bc -l', desc: 'modo calculadora científica', usage: 'echo "s(1)+l(10)" | bc -l', combo: 'Dentro de bc usa sin(), cos(), e, pi=4*a(1).' },
+        { cmd: 'python3 -q', desc: 'REPL Python para cálculo', usage: 'python3 -q  # luego import math; math.sqrt(2)', combo: 'Ctrl+D para salir.' },
+        { cmd: 'dropbomb (macro)', desc: 'tu macro personalizada', usage: 'echo "alias dropbomb=\"echo lanzando macro\"" >> ~/.zshrc', combo: 'Cambia el alias para lanzar secuencias seguras. Recarga con source ~/.zshrc.' },
+        { cmd: 'chmod +x <file>', desc: 'vuelve ejecutable un script', usage: 'chmod +x script.sh', combo: './script.sh para correrlo.' }
+      ]
+    };
+
+    const detail = {
+      panel: document.getElementById('detail'),
+      cmd: document.getElementById('detail-cmd'),
+      desc: document.getElementById('detail-desc'),
+      usage: document.getElementById('detail-usage'),
+      combo: document.getElementById('detail-combo'),
+      copy: document.getElementById('copy-btn'),
+      current: null
+    };
+
+    const mount = (id, list) => {
+      const container = document.getElementById(id);
+      list.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `<div class="cmd">$ ${item.cmd}</div><p class="desc">${item.desc}</p>`;
+        card.addEventListener('click', () => showDetail(item));
+        container.appendChild(card);
+      });
+    };
+
+    const showDetail = (item) => {
+      detail.current = item;
+      detail.cmd.textContent = `$ ${item.cmd}`;
+      detail.desc.textContent = item.desc || '';
+      detail.usage.textContent = item.usage ? `Ejemplo: ${item.usage}` : '';
+      detail.combo.textContent = item.combo ? `Combina con: ${item.combo}` : '';
+      detail.panel.hidden = false;
+    };
+
+    detail.copy.addEventListener('click', () => {
+      if (!detail.current) return;
+      const text = detail.current.usage || detail.current.cmd;
+      navigator.clipboard?.writeText(text).then(() => {
+        detail.copy.textContent = 'Copiado ✔';
+        setTimeout(() => detail.copy.textContent = 'Copiar', 1400);
+      }).catch(() => {
+        detail.copy.textContent = 'No se pudo copiar';
+        setTimeout(() => detail.copy.textContent = 'Copiar', 1400);
+      });
+    });
+
+    mount('basic', groups.basic);
+    mount('history', groups.history);
+    mount('nav', groups.nav);
+    mount('combos', groups.combos);
+
+    showDetail(groups.basic[0]);
+  </script>
+</body>
+</html>
